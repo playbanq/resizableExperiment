@@ -5,6 +5,9 @@
     <meta name='description' content=''>
     <title>Resizable Canvas</title>
     <style>
+        body {
+            margin: 0px;
+        }
         #container {
             width: 1000px;
             background-color: #fcfcfc;
@@ -20,55 +23,56 @@
     </style>
 </head>
 <body>
-    <div id='container'>
-        <p>hello</p>
-            <canvas id='resizableCanvas' class='resizableContainer'></canvas>
-    </div>   
+    <canvas id='resizableCanvas' class='resizableContainer'></canvas>
     <script>
         var canvas = document.getElementById('resizableCanvas');
-            canvas.width = '500';
-            canvas.height = '300';
+            // canvas.width = '500';
+            // canvas.height = '300';
+        // Full page canvas
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         var context = canvas.getContext('2d'),
             canvasOffset = canvas.getBoundingClientRect(),
-            size = { 
-                width: 500,
-                height: 300
+            screen = {
+                width: window.innerWidth,
+                height: window.innerHeight
+            },
+            ratio = {
+                width: 1,
+                height: 1
             };
-
-        document.onmousemove = function (event) {
-            size.width = (500 - event.clientY);
-        };
 
         // Platforms
         var platforms = [
             // [startX, heightY, widthX]
-            [50, 50, 70],
-            [200, 30, 50],
-            [350, 40, 50]
+            [200, 300, 200],
+            [450, 200, 200],
+            [900, 250, 300]
         ];
-            
+        
         // Render
         setInterval(function () {
             context.clearRect(0, 0, canvasOffset.width, canvasOffset.height);
+            // Adjust the canvas size to the window size
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
 
-            if (size.width > 250) {
-                canvas.width = size.width;
-                ratio = size.width/500;
+            // Adjust platform offsets according to the resizing
+            if (window.innerWidth > screen.width/2) {
+                ratio.width = canvas.width/screen.width;
+            }
+            if (window.innerHeight > screen.height/2) {
+                ratio.height = canvas.height/screen.height;
             }
 
-            platforms.forEach(function(platform) {
+            // Draw platforms
+            platforms.forEach(function (platform) {
                 context.beginPath();
-                context.moveTo(platform[0]*ratio, canvas.height - platform[1]);
-                context.lineTo(platform[0]*ratio + platform[2], canvas.height - platform[1]);
+                context.moveTo(platform[0]*ratio.width, canvas.height - platform[1]*ratio.height);
+                context.lineTo(platform[0]*ratio.width + platform[2], canvas.height - platform[1]*ratio.height);
                 context.stroke();
             });
-        }, 16);
-
-        // Handle clicks on canvas
-        canvas.onclick = function (event) {
-            var canvasOffset = canvas.getBoundingClientRect();
-            console.log(event.clientX - canvasOffset.left, event.clientY - canvasOffset.top);
-        };
+        }, 33);
 
     </script>
 </body>
