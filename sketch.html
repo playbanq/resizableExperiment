@@ -49,6 +49,19 @@
             [450, 200, 200],
             [900, 250, 300]
         ];
+
+        // Avatar
+        var avatar = {
+            radius: 10,
+            pos: {
+                x: 300,
+                y: 300
+            },
+            forces: {
+                x: 0,
+                y: 0
+            }
+        }
         
         // Clock
         var clock = {
@@ -84,6 +97,13 @@
                 context.lineTo(platform[0]*ratio.width + platform[2], canvas.height - platform[1]*ratio.height);
                 context.stroke();
             });
+            // Draw avatar
+            context.beginPath();
+            context.arc(avatar.pos.x, avatar.pos.y, avatar.radius, 0, 2*Math.PI);
+            context.fillStyle = '#999';
+            context.fill();
+            context.stroke();
+
         }, 1000/clock.fps);
 
     </script>
