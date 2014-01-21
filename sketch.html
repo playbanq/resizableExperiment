@@ -52,12 +52,17 @@
 
         // Avatar
         var avatar = {
+            mass: 0.05,
             radius: 10,
-            pos: {
+            position: {
                 x: 300,
                 y: 300
             },
             forces: {
+                x: 0,
+                y: 9.8
+            },
+            speed: {
                 x: 0,
                 y: 0
             }
@@ -74,7 +79,7 @@
         setInterval(function () {
             // Check actual delay
             clock.current = (new Date()).getTime();
-            var frame = clock.current - clock.last;
+            var frameDelay = clock.current - clock.last;
             clock.last = clock.current;
 
             context.clearRect(0, 0, canvasOffset.width, canvasOffset.height);
@@ -93,13 +98,21 @@
             // Draw platforms
             platforms.forEach(function (platform) {
                 context.beginPath();
-                context.moveTo(platform[0]*ratio.width, canvas.height - platform[1]*ratio.height);
-                context.lineTo(platform[0]*ratio.width + platform[2], canvas.height - platform[1]*ratio.height);
+                context.moveTo(platform[0] * ratio.width, canvas.height - platform[1] * ratio.height);
+                context.lineTo(platform[0] * ratio.width + platform[2], canvas.height - platform[1] * ratio.height);
                 context.stroke();
             });
+
+
+            // Compute avatar forces and resulting acceleration and speed
+            avatar.speed.y = avatar.speed.y + (avatar.forces.y/avatar.mass)*frameDelay/1000;
+            // Compute avatar position
+            avatar.position.x += avatar.speed.x * frameDelay/1000
+            avatar.position.y += avatar.speed.y * frameDelay/1000
+
             // Draw avatar
             context.beginPath();
-            context.arc(avatar.pos.x, avatar.pos.y, avatar.radius, 0, 2*Math.PI);
+            context.arc(avatar.position.x, avatar.position.y, avatar.radius, 0, 2*Math.PI);
             context.fillStyle = '#999';
             context.fill();
             context.stroke();
