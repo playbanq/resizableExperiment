@@ -50,8 +50,19 @@
             [900, 250, 300]
         ];
         
+        // Clock
+        var clock = {
+            last: (new Date()).getTime(),
+            current: null
+        };
+        
         // Render
         setInterval(function () {
+            // Check actual delay
+            clock.current = (new Date()).getTime();
+            var frame = clock.current - clock.last;
+            clock.last = clock.current;
+
             context.clearRect(0, 0, canvasOffset.width, canvasOffset.height);
             // Adjust the canvas size to the window size
             canvas.width = window.innerWidth;
