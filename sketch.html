@@ -53,9 +53,10 @@
         // Clock
         var clock = {
             last: (new Date()).getTime(),
-            current: null
+            current: null,
+            fps: 30
         };
-        
+
         // Render
         setInterval(function () {
             // Check actual delay
@@ -83,7 +84,7 @@
                 context.lineTo(platform[0]*ratio.width + platform[2], canvas.height - platform[1]*ratio.height);
                 context.stroke();
             });
-        }, 33);
+        }, 1000/clock.fps);
 
     </script>
 </body>
