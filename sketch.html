@@ -65,6 +65,19 @@
             speed: {
                 x: 0,
                 y: 0
+            },
+            keys: {
+                'up': false,
+                'down': false,
+                'left': false,
+                'right': false
+            },
+            walk: {
+                force: 100
+            },
+            jump: {
+                force: 10,
+                duration: 500
             }
         }
         
@@ -105,20 +118,72 @@
 
 
             // Compute avatar forces and resulting acceleration and speed
-            avatar.speed.y = avatar.speed.y + (avatar.forces.y/avatar.mass)*frameDelay/1000;
+            avatar.speed.x = (avatar.forces.x/avatar.mass) * frameDelay/1000;
+            avatar.speed.y = avatar.speed.y + (avatar.forces.y/avatar.mass) * frameDelay/1000;
             // Compute avatar position
             avatar.position.x += avatar.speed.x * frameDelay/1000
             avatar.position.y += avatar.speed.y * frameDelay/1000
 
             // Draw avatar
             context.beginPath();
-            context.arc(avatar.position.x, avatar.position.y, avatar.radius, 0, 2*Math.PI);
+            context.arc(avatar.position.x, avatar.position.y, avatar.radius, 0, 2 * Math.PI);
             context.fillStyle = '#999';
             context.fill();
             context.stroke();
 
         }, 1000/clock.fps);
 
+        // Handle key events
+        window.onkeydown = function (event) {
+            var key = event.keyCode || event.charCode;
+
+            switch (key) {
+            case 37:
+                avatar.forces.x = -avatar.walk.force;
+                break;
+            case 38:
+                if (!avatar.keys.up) {
+                    avatar.keys.up = true;
+                    avatar.forces.y -= avatar.jump.force;
+                    setTimeout(function () {
+                        if (avatar.keys.up) {
+                            avatar.forces.y += avatar.jump.force;
+                        }
+                    }, avatar.jump.duration);
+                }
+                break;
+            case 39:
+                avatar.forces.x = avatar.walk.force;
+                break;
+            case 40:
+                break;
+            default:
+                break;
+            }
+        }
+        window.onkeyup = function (event) {
+            var key = event.keyCode || event.charCode;
+
+            switch (key) {
+            case 37:
+                avatar.keys.left = false;
+                avatar.forces.x = 0;
+                break;
+            case 38:
+                avatar.keys.up = false;
+                break;
+            case 39:
+                avatar.forces.right = false;
+                avatar.forces.x = 0;
+                break;
+            case 40:
+                avatar.keys.down = false;
+                break;
+            default:
+                break;
+            }
+        }
+        
     </script>
 </body>
 </html>
