@@ -58,7 +58,7 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
   var radius = 10.0;
   var keys = {'up': false, 'down': false, 'left': false,'right': false};
   var walk = {force: 400};
-  var jump = {force: 500, duration: 300};
+  var jump = {speed: 300};
   var jumping = false;
   var falling = true;
   
@@ -140,15 +140,8 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
         if (action) {
           if (!keys.up && !jumping && !falling) {
               keys.up = true;
-              yForce = -jump.force;
+              ySpeed = -jump.speed;
               jumping = true;
-              setTimeout(function () {
-                  // if (avatar.keys.up) {
-                      yForce = gravity;
-                      falling = true;
-                      jumping = false;
-                  // }
-              }, jump.duration);
           }
         } else {
           keys.up = false;
@@ -215,6 +208,10 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
         // Compute avatar forces and resulting acceleration and speed
         xSpeed = (xForce/mass) * delay;
         ySpeed += (yForce/mass) * delay;
+        if (ySpeed >= 0) {
+          falling = true;
+          jumping = false;
+        }
         
         // Compute avatar position
         xCoord += (xSpeed / factor.x) * delay;
