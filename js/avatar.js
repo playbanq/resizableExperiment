@@ -207,21 +207,6 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
     },
 
     /**
-     * Adjust position according to platform.
-     * PARAM
-     * platform: The relative platform.
-     * ration: ?
-     * sign: Indicates if the screen is increasing or decreasing in size.
-     */
-    "adjustPositionAccordingToPlatform": {
-      value: function(platform, ratio, sign){
-        if (xCoord > platform[0] * ratio.width && xCoord  < platform[0] * ratio.width + platform[2]) {
-            xCoord += sign * (xCoord - platform[0] * ratio.width) / (platform[2] * ratio.width);
-        }
-      }
-    },
-
-    /**
      * Iterates the platforms looking for collisions.
      * PARAM
      * platforms: Array of platforms.
@@ -234,13 +219,14 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
         var collision = false;
         for(var i = 0; i < platforms.length; i++) {
             var platform = platforms[i];
-            if (xCoord > platform[0] * ratio.width && xCoord  < platform[0] * ratio.width + platform[2]) {
+            if (xCoord > platform[0] && xCoord * ratio.width < platform[0] * ratio.width + platform[2]) {
                 if (yCoord + radius >= height - platform[1] * ratio.height &&
                     yCoord + radius < height - platform[1] * ratio.height + 2 * radius) {
                     ySpeed = 0;
                     yForce = 0;
                     collision = true;
                     jumping = false;
+                    break;
                 }
             }
         };
@@ -254,9 +240,9 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Draw the avatar.
      */
     "drawInContext": {
-      value: function(context){
+      value: function(context, ratio){
         context.beginPath();
-        context.arc(xCoord, yCoord, radius, 0, 2 * Math.PI);
+        context.arc(xCoord * ratio.width, yCoord, radius, 0, 2 * Math.PI);
         context.fillStyle = '#999';
         context.fill();
         context.stroke();
