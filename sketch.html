@@ -96,16 +96,15 @@
 
         // Handle window resize consequences
         window.onresize = function () {
-            var sign = 2;
+            var sign = 1;
             if (window.innerWidth < resize.lastWidth) {
-                sign = -5; console.log('decreasing');
+                sign = -2; console.log('decreasing');
             }
             resize.lastWidth = window.innerWidth;
 
             // Adjust avatar position according to window resizing      
             platforms.forEach(function (platform) {
                 if (avatar.position.x > platform[0] * ratio.width && avatar.position.x  < platform[0] * ratio.width + platform[2]) {
-                    console.log((avatar.position.x - platform[0] * ratio.width));
                     avatar.position.x += sign * (avatar.position.x - platform[0] * ratio.width) / (platform[2] * ratio.width);
                 }
             });
