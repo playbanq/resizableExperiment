@@ -1,7 +1,7 @@
 /*
   The MIT License (MIT)
 
-  Copyright (c) 2013 Chess Team
+  Copyright (c) 2014 Jorge Zaccaro, Santiago Castillo
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -33,18 +33,18 @@ var PB = PB || {};
  * startingX: The starting xCoord.
  * startingY: The starting yCoord.
  */
-PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
+PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
   // Set deffaults in case parameters are null.
-  if(typeof(mass) == 'undefined' || isNaN(mass)){
+  if (typeof(mass) == 'undefined' || isNaN(mass)) {
     mass = 0.05;
   }
-  if(typeof(gravity) == 'undefined' || isNaN(gravity)){
+  if (typeof(gravity) == 'undefined' || isNaN(gravity)) {
     gravity = 30;
   }
-  if(typeof(startingX) == 'undefined' || isNaN(startingX)){
+  if (typeof(startingX) == 'undefined' || isNaN(startingX)) {
     startingX = 0;
   }
-  if(typeof(startingY) == 'undefined' || isNaN(startingY)){
+  if (typeof(startingY) == 'undefined' || isNaN(startingY)) {
     startingY = 0;
   }
 
@@ -67,8 +67,11 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Return the avatar's position.
      */
     "getPosition": {
-      value: function(){
-        return {x: xCoord, y: yCoord};
+      value: function () {
+        return {
+          x: xCoord, 
+          y: yCoord
+        };
       }
     },
     
@@ -76,7 +79,7 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Set the avatar's position.
      */
     "setPosition": {
-      value: function(x, y){
+      value: function (x, y) {
         xCoord = x;
         yCoord = y;
       }
@@ -86,8 +89,11 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Return the avatar's force.
      */
     "getForce": {
-      value: function(){
-        return {x: xForce, y: yForce};
+      value: function () {
+        return {
+          x: xForce, 
+          y: yForce
+        };
       }
     },
     
@@ -95,7 +101,7 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Set the avatar's force.
      */
     "setPosition": {
-      value: function(x, y){
+      value: function (x, y) {
         xForce = x;
         yForce = y;
       }
@@ -105,8 +111,11 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Return the avatar's speed.
      */
     "getSpeed": {
-      value: function(){
-        return {x: xForce, y: yForce};
+      value: function () {
+        return {
+          x: xForce, 
+          y: yForce
+        };
       }
     },
     
@@ -114,7 +123,7 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Set the avatar's speed.
      */
     "setSpeed": {
-      value: function(x, y){
+      value: function (x, y) {
         xSpeed = x;
         ySpeed = y;
       }
@@ -126,8 +135,8 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * action: If true, then the jump just started. False otherwise.
      */
     "jump": {
-      value: function(action){
-        if(action){
+      value: function (action) {
+        if (action) {
           if (!keys.up && !jumping) {
               keys.up = true;
               yForce = -jump.force;
@@ -139,7 +148,7 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
                   // }
               }, jump.duration);
           }
-        } else{
+        } else {
           keys.up = false;
           yForce = 0;
         }
@@ -153,18 +162,18 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * direction: If true movement is to the right, if false movement is to the left.
      */
     "move": {
-      value: function(action, direction){
-        if(action){
-          if(direction){
+      value: function (action, direction) {
+        if (action) {
+          if (direction) {
             xForce = walk.force;
-          }else{
+          } else {
             xForce = -walk.force;
           }
-        }else{
-          if(direction){
+        } else {
+          if (direction) {
             keys.right = false;
             xForce = 0;
-          }else{
+          } else {
             keys.left = false;
             xForce = 0;
           }
@@ -178,7 +187,7 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * height: Screen height.
      */
     "shouldResetToStartingPosition": {
-      value: function(height){
+      value: function (height) {
         if (yCoord > height) {
             xSpeed = 0;
             ySpeed = 0;
@@ -195,13 +204,18 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * delay: Time interval.
      */
     "computePosition": {
-      value: function(delay){
+      value: function (delay, ratio) {
+        var factor = { 
+              x: ratio.width || 1, 
+              y: ratio.height || 1 
+            };
+
         // Compute avatar forces and resulting acceleration and speed
         xSpeed = (xForce/mass) * delay;
         ySpeed += (yForce/mass) * delay;
         
         // Compute avatar position
-        xCoord += xSpeed * delay;
+        xCoord += (xSpeed / factor.x) * delay;
         yCoord += ySpeed * delay;
       }
     },
@@ -214,10 +228,10 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * height: Height of the screen.
      */
     "checkForCollisions": {
-      value: function(platforms, ratio, height){
+      value: function (platforms, ratio, height) {
         // avatar.speed.y = 0;
         var collision = false;
-        for(var i = 0; i < platforms.length; i++) {
+        for (var i = 0; i < platforms.length; i++) {
             var platform = platforms[i];
             if (xCoord > platform[0] && xCoord * ratio.width < platform[0] * ratio.width + platform[2]) {
                 if (yCoord + radius >= height - platform[1] * ratio.height &&
@@ -240,7 +254,7 @@ PB.NewAvatarWithMass = function(mass, gravity, startingX, startingY){
      * Draw the avatar.
      */
     "drawInContext": {
-      value: function(context, ratio){
+      value: function (context, ratio) {
         context.beginPath();
         context.arc(xCoord * ratio.width, yCoord, radius, 0, 2 * Math.PI);
         context.fillStyle = '#999';
