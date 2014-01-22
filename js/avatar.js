@@ -60,6 +60,7 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
   var walk = {force: 400};
   var jump = {force: 400, duration: 300};
   var jumping = false;
+  var falling = true;
   
   // Public stuff.
   var properties = {
@@ -137,7 +138,7 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
     "jump": {
       value: function (action) {
         if (action) {
-          if (!keys.up && !jumping) {
+          if (!keys.up && !jumping && !falling) {
               keys.up = true;
               yForce = -jump.force;
               jumping = true;
@@ -145,6 +146,7 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
                   // if (avatar.keys.up) {
                       yForce = gravity;
                       ySpeed = 0;
+                      falling = true;
                   // }
               }, jump.duration);
           }
@@ -236,7 +238,14 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
             if (xCoord > platform[0] && xCoord * ratio.width < platform[0] * ratio.width + platform[2]) {
                 if (yCoord + radius >= height - platform[1] * ratio.height &&
                     yCoord - radius < height - platform[1] * ratio.height ) {
-                    yCoord = height - platform[1] - radius;
+                    if (jumping && !falling && yCoord > height - platform[1] * ratio.height ) {
+                      yCoord = height - platform[1] + radius;
+                      falling = true;
+                    } else if (falling) { 
+                      yCoord = height - platform[1] - radius; 
+                      falling = false;
+                    }
+
                     ySpeed = 0;
                     yForce = 0;
                     collision = true;
@@ -247,6 +256,7 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
         };
         if (!collision) {
           yForce = gravity;
+          falling = true;
         } 
       }
     },
