@@ -236,6 +236,7 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
             if (xCoord > platform[0] && xCoord * ratio.width < platform[0] * ratio.width + platform[2]) {
                 if (yCoord + radius >= height - platform[1] * ratio.height &&
                     yCoord + radius < height - platform[1] * ratio.height + 2 * radius) {
+                    yCoord = height - platform[1] - radius;
                     ySpeed = 0;
                     yForce = 0;
                     collision = true;
