@@ -64,18 +64,7 @@ var clock = {
 
 // Handle window resize consequences
 window.onresize = function () {
-    var sign = 1;
-    if (window.innerWidth < resize.lastWidth) {
-        sign = -2; console.log('decreasing');
-    }
-    resize.lastWidth = window.innerWidth;
-
-    // Adjust avatar position according to window resizing      
-    platforms.forEach(function (platform) {
-        avatar.adjustPositionAccordingToPlatform(platform, ratio, sign);
-    });
-    // 
-    //avatar.position.y *= ratio.height;
+    
 }
 
 // Render
@@ -113,7 +102,7 @@ setInterval(function () {
     avatar.computePosition(frameDelay/1000);
 
     // Draw avatar
-    avatar.drawInContext(context);
+    avatar.drawInContext(context, ratio);
 
     // Check collisions.
     avatar.checkForCollisions(platforms, ratio, canvas.height);
