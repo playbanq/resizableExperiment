@@ -99,7 +99,7 @@ setInterval(function () {
     avatar.shouldResetToStartingPosition(screen.height);
 
     // Compute the avatar' position.
-    avatar.computePosition(frameDelay/1000);
+    avatar.computePosition(frameDelay/1000, ratio);
 
     // Draw avatar
     avatar.drawInContext(context, ratio);
