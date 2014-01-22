@@ -101,11 +101,11 @@ setInterval(function () {
     // Compute the avatar' position.
     avatar.computePosition(frameDelay/1000, ratio);
 
-    // Draw avatar
-    avatar.drawInContext(context, ratio);
-
     // Check collisions.
     avatar.checkForCollisions(platforms, ratio, canvas.height);
+
+    // Draw avatar
+    avatar.drawInContext(context, ratio);
 
 }, 1000/clock.fps);
 
