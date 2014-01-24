@@ -42,7 +42,8 @@ var context = canvas.getContext('2d'),
         width: 1,
         height: 1
     },
-    gravity = 30;
+    pixelsPerMeter = 50;
+    gravity = 25;
 
 // Platforms
 var platforms = [
@@ -53,7 +54,7 @@ var platforms = [
 ];
 
 // Avatar
-var avatar = PB.NewAvatarWithMass(0.05, gravity, 250, 150);
+var avatar = PB.NewAvatarWithMass(0.05, gravity, pixelsPerMeter, 250, 150);
 
 // Clock
 var clock = {

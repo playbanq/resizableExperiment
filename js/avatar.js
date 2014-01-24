@@ -30,10 +30,11 @@ var PB = PB || {};
  * PARAM:
  * mass: Avatar's mass.
  * gravity: The force of gravity to apply.
+ * pixelsPerMeter: Scale used.
  * startingX: The starting xCoord.
  * startingY: The starting yCoord.
  */
-PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
+PB.NewAvatarWithMass = function (mass, gravity, pixelsPerMeter, startingX, startingY) {
   // Set deffaults in case parameters are null.
   if (typeof(mass) == 'undefined' || isNaN(mass)) {
     mass = 0.05;
@@ -52,13 +53,13 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
   var xCoord = startingX;
   var yCoord = startingY;
   var xForce = 0;
-  var yForce = gravity;
   var xSpeed = 0;
   var ySpeed = 0;
-  var radius = 10.0;
+  var xTargetSpeed = 0;
+  var radius = pixelsPerMeter / 2;
   var keys = {'up': false, 'down': false, 'left': false,'right': false};
-  var walk = {force: 400};
-  var jump = {speed: 300};
+  var walk = {speed: 4};
+  var jump = {maxSpeed: 12, minSpeed: 6};
   var jumping = false;
   var falling = true;
   
@@ -85,50 +86,6 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
         yCoord = y;
       }
     },
-    
-    /**
-     * Return the avatar's force.
-     */
-    "getForce": {
-      value: function () {
-        return {
-          x: xForce, 
-          y: yForce
-        };
-      }
-    },
-    
-    /**
-     * Set the avatar's force.
-     */
-    "setPosition": {
-      value: function (x, y) {
-        xForce = x;
-        yForce = y;
-      }
-    },
-
-    /**
-     * Return the avatar's speed.
-     */
-    "getSpeed": {
-      value: function () {
-        return {
-          x: xForce, 
-          y: yForce
-        };
-      }
-    },
-    
-    /**
-     * Set the avatar's speed.
-     */
-    "setSpeed": {
-      value: function (x, y) {
-        xSpeed = x;
-        ySpeed = y;
-      }
-    },
 
     /**
      * Make the avatar jump.
@@ -140,12 +97,14 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
         if (action) {
           if (!keys.up && !jumping && !falling) {
               keys.up = true;
-              ySpeed = -jump.speed;
+              ySpeed = -jump.maxSpeed;
               jumping = true;
           }
         } else {
           keys.up = false;
-          yForce = 0;
+          if(ySpeed < -jump.minSpeed){
+              ySpeed = -jump.minSpeed;
+          }
         }
       }
     },
@@ -160,18 +119,12 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
       value: function (action, direction) {
         if (action) {
           if (direction) {
-            xForce = walk.force;
+            xTargetSpeed = walk.speed;;
           } else {
-            xForce = -walk.force;
+            xTargetSpeed = -walk.speed;
           }
         } else {
-          if (direction) {
-            keys.right = false;
-            xForce = 0;
-          } else {
-            keys.left = false;
-            xForce = 0;
-          }
+          xTargetSpeed = 0;        
         }
       }
     },
@@ -205,17 +158,26 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
               y: ratio.height || 1 
             };
 
-        // Compute avatar forces and resulting acceleration and speed
-        xSpeed = (xForce/mass) * delay;
-        ySpeed += (yForce/mass) * delay;
+        // Compute gravity.
+        ySpeed += gravity * delay;
         if (ySpeed >= 0) {
           falling = true;
           jumping = false;
         }
+
+        // Compute horizontal speed.
+        if(xTargetSpeed > 0){
+            xSpeed = (0.10 * xTargetSpeed) + ((1 - 0.10) * xSpeed); 
+        } else{
+            xSpeed = (0.20 * xTargetSpeed) + ((1 - 0.20) * xSpeed); 
+        }
+        if(Math.abs(xSpeed) < (0.10 * xTargetSpeed)){
+            xSpeed = 0;
+        }        
         
         // Compute avatar position
-        xCoord += (xSpeed / factor.x) * delay;
-        yCoord += ySpeed * delay;
+        xCoord += (xSpeed / factor.x) * delay * pixelsPerMeter;
+        yCoord += ySpeed * delay * pixelsPerMeter;
       }
     },
 
@@ -241,12 +203,10 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
                     if (jumping && yCoord > height - platform[1] * ratio.height ) {
                       yCoord = height - platform[1] + radius;
                       falling = true;
-                      yForce = gravity;
                       ySpeed = 0;
                     } else if (falling && !jumping) { 
                       yCoord = height - platform[1] - radius; 
                       falling = false;
-                      yForce = 0;
                       ySpeed = 0;
                     }
 
@@ -255,7 +215,6 @@ PB.NewAvatarWithMass = function (mass, gravity, startingX, startingY) {
             }
         };
         if (!collision) {
-          yForce = gravity;
           falling = true;
         } 
       }
