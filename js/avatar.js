@@ -58,8 +58,8 @@ PB.NewAvatarWithMass = function (mass, gravity, pixelsPerMeter, startingX, start
   var xTargetSpeed = 0;
   var radius = pixelsPerMeter / 2;
   var keys = {'up': false, 'down': false, 'left': false,'right': false};
-  var walk = {speed: 4};
-  var jump = {maxSpeed: 12, minSpeed: 6};
+  var walk = {speed: 5};
+  var jump = {maxSpeed: 14, minSpeed: 7};
   var jumping = false;
   var falling = true;
   

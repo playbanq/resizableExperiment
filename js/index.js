@@ -43,7 +43,7 @@ var context = canvas.getContext('2d'),
         height: 1
     },
     pixelsPerMeter = 50;
-    gravity = 25;
+    gravity = 30;
 
 // Platforms
 var platforms = [
